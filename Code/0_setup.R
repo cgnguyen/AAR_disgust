@@ -81,6 +81,72 @@
               eval_muslim_dif= eval_muslim-eval_white)
      
      
+   
+    
+    
+    
+    #Note- last item reverse coded
+    D_1<-
+      D_1 %>% 
+        mutate(mod_rac_1= car::recode(as.numeric(v_162)," 6= NA;7=NA;98=NA"),
+                 mod_rac_2= car::recode(as.numeric(v_163)," 6= NA;7=NA;98=NA"),
+                 mod_rac_3= car::recode(as.numeric(v_164)," 6= NA;7=NA;98=NA"),
+                 mod_rac_4= car::recode(as.numeric(v_165)," 6= NA;7=NA;98=NA"),
+                 mod_rac_5= car::recode(as.numeric(v_166)," 6= NA;7=NA;98=NA"),
+                 mod_rac_6= car::recode(as.numeric(v_167)," 6= NA;7=NA;98=NA;
+                                        5=1;4=2;3=3;2=4;1=5",))%>%
+        mutate(mod_rac_index = rowMeans(dplyr::select(., dplyr::starts_with("mod_rac_")), na.rm = TRUE),
+               mod_rac_w1 = rowMeans(dplyr::select(.,mod_rac_1,mod_rac_4,mod_rac_5 ), na.rm = TRUE))
+        
+     
+    
+    
+     ##Social Distance Measures----------------------------
+     look_for(D_1, "F33")
+     
+     D_1<-
+       D_1%>%
+        mutate(soc_dist_asian_1=car::recode(v_185,"98=NA;99=NA")-4,
+               soc_dist_asian_2=car::recode(v_186,"98=NA;99=NA")-4,
+               soc_dist_asian_3=car::recode(v_187,"98=NA;99=NA")-4,
+               soc_dist_black_1=car::recode(v_188,"98=NA;99=NA")-4,
+               soc_dist_black_2=car::recode(v_189,"98=NA;99=NA")-4,
+               soc_dist_black_3=car::recode(v_190,"98=NA;99=NA")-4,
+               soc_dist_muslim_1=car::recode(v_191,"98=NA;99=NA")-4,
+               soc_dist_muslim_2=car::recode(v_192,"98=NA;99=NA")-4,
+               soc_dist_muslim_3=car::recode(v_193,"98=NA;99=NA")-4,
+               soc_dist_white_1=car::recode(v_194,"98=NA;99=NA")-4,
+               soc_dist_white_2=car::recode(v_195,"98=NA;99=NA")-4,
+               soc_dist_white_3=car::recode(v_196,"98=NA;99=NA")-4)%>%
+      mutate(soc_dist_asian_index = rowMeans(dplyr::select(., dplyr::starts_with("soc_dist_asian_")), na.rm = TRUE),
+             soc_dist_black_index = rowMeans(dplyr::select(., dplyr::starts_with("soc_dist_black_")), na.rm = TRUE),
+             soc_dist_muslim_index = rowMeans(dplyr::select(., dplyr::starts_with("soc_dist_muslim_")), na.rm = TRUE),
+             soc_dist_white_index = rowMeans(dplyr::select(., dplyr::starts_with("soc_dist_white_")), na.rm = TRUE))
+     
+     
+      ##Big 5--------------
+      #Some Items reverse coded)
+      D_1<-
+        D_1%>%
+          mutate(big5_extro_1=(car::recode(v_63,"98=NA;99=NA")*-1+5),
+                 big5_agree_1=(car::recode(v_64,"98=NA;99=NA")-1),
+                 big5_consc_1=(car::recode(v_65,"98=NA;99=NA")*-1+5),
+                 big5_neuro_1=(car::recode(v_66,"98=NA;99=NA")*-1+5),
+                 big5_open_1=(car::recode(v_67,"98=NA;99=NA")*-1+5),
+                 big5_extro_2=(car::recode(v_68,"98=NA;99=NA")-1),
+                 big5_agree_2=(car::recode(v_69,"98=NA;99=NA")*-1+5),
+                 big5_consc_2=(car::recode(v_70,"98=NA;99=NA")-1),
+                 big5_neuro_2=(car::recode(v_71,"98=NA;99=NA")-1),
+                 big5_open_2=(car::recode(v_72,"98=NA;99=NA")-1))%>%
+        mutate(big_5_extro = rowMeans(dplyr::select(.,big5_extro_1,big5_extro_2), na.rm=T),
+               big_5_agree= rowMeans(dplyr::select(.,big5_agree_1,big5_agree_2), na.rm=T),
+               big_5_consc= rowMeans(dplyr::select(.,big5_consc_1,big5_extro_2), na.rm=T),
+               big_5_neuro= rowMeans(dplyr::select(.,big5_neuro_1,big5_neuro_2), na.rm=T),
+               big_5_open= rowMeans(dplyr::select(.,big5_open_1,big5_open_2), na.rm=T))
+      
+  
+    
+   write_rds(D_1, file="./DATA/observational.rds")
      
 #Conjoint Cleaning & Setup-----------------------------------
   ##dplyr::select conditions and pivot longer to have one row per trial
