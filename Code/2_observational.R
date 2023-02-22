@@ -107,4 +107,108 @@
   
   
   
+  ##Check sub-dimensions for social distance measures----------------------------
+  ###Neighbours------------------------------
+  mod_soc_dist_asian_1<-lm(soc_dist_asian_1~disgust_disease+ 
+                              age+gender_resp+activity_simple+edu_simple+
+                              bundesland+
+                              lr+
+                              big_5_extro+big_5_agree+big_5_consc+big_5_neuro+big_5_open, 
+                              data=D)
+    
+  
+  mod_soc_dist_black_1<-lm(soc_dist_black_1~disgust_disease+ 
+                             age+gender_resp+activity_simple+edu_simple+
+                             bundesland+
+                               lr+
+                               big_5_extro+big_5_agree+big_5_consc+big_5_neuro+big_5_open, 
+                      data=D)
+    
+  
+  mod_soc_dist_muslim_1<-lm(soc_dist_muslim_1~disgust_disease+ 
+                             age+gender_resp+activity_simple+edu_simple+
+                             bundesland+
+                               lr+
+                               big_5_extro+big_5_agree+big_5_consc+big_5_neuro+big_5_open, 
+                      data=D)
+    
+  
+    
+  mod_soc_dist_white_1<-lm(soc_dist_white_1~disgust_disease+ 
+                             age+gender_resp+activity_simple+edu_simple+
+                             bundesland+lr+
+                               big_5_extro+big_5_agree+big_5_consc+big_5_neuro+big_5_open, 
+                      data=D)
+  
+  screenreg(list(mod_soc_dist_asian_1,mod_soc_dist_black_1,mod_soc_dist_muslim_1,mod_soc_dist_white_1))
+  
+  
+  ###Work------------------------------
+  mod_soc_dist_asian_2<-lm(soc_dist_asian_2~disgust_disease+ 
+                              age+gender_resp+activity_simple+edu_simple+
+                              bundesland+
+                              lr+
+                              big_5_extro+big_5_agree+big_5_consc+big_5_neuro+big_5_open, 
+                              data=D)
+    
+  
+  mod_soc_dist_black_2<-lm(soc_dist_black_2~disgust_disease+ 
+                             age+gender_resp+activity_simple+edu_simple+
+                             bundesland+
+                               lr+
+                               big_5_extro+big_5_agree+big_5_consc+big_5_neuro+big_5_open, 
+                      data=D)
+    
+  
+  mod_soc_dist_muslim_2<-lm(soc_dist_muslim_2~disgust_disease+ 
+                             age+gender_resp+activity_simple+edu_simple+
+                             bundesland+
+                               lr+
+                               big_5_extro+big_5_agree+big_5_consc+big_5_neuro+big_5_open, 
+                      data=D)
+    
+  
+    
+  mod_soc_dist_white_2<-lm(soc_dist_white_2~disgust_disease+ 
+                             age+gender_resp+activity_simple+edu_simple+
+                             bundesland+lr+
+                               big_5_extro+big_5_agree+big_5_consc+big_5_neuro+big_5_open, 
+                      data=D)
+  
+  screenreg(list(mod_soc_dist_asian_2,mod_soc_dist_black_2,mod_soc_dist_muslim_2,mod_soc_dist_white_2))
+  
+  
+  ###Family-------------------------------------------------------------
+  mod_soc_dist_asian_3<-lm(soc_dist_asian_3~disgust_disease+ 
+                              age+gender_resp+activity_simple+edu_simple+
+                              bundesland+
+                              lr+
+                              big_5_extro+big_5_agree+big_5_consc+big_5_neuro+big_5_open, 
+                              data=D)
+    
+  
+  mod_soc_dist_black_3<-lm(soc_dist_black_3~disgust_disease+ 
+                             age+gender_resp+activity_simple+edu_simple+
+                             bundesland+
+                               lr+
+                               big_5_extro+big_5_agree+big_5_consc+big_5_neuro+big_5_open, 
+                      data=D)
+    
+  
+  mod_soc_dist_muslim_3<-lm(soc_dist_muslim_3~disgust_disease+ 
+                             age+gender_resp+activity_simple+edu_simple+
+                             bundesland+
+                               lr+
+                               big_5_extro+big_5_agree+big_5_consc+big_5_neuro+big_5_open, 
+                      data=D)
+    
+  
+    
+  mod_soc_dist_white_3<-lm(soc_dist_white_3~disgust_disease+ 
+                             age+gender_resp+activity_simple+edu_simple+
+                             bundesland+lr+
+                               big_5_extro+big_5_agree+big_5_consc+big_5_neuro+big_5_open, 
+                      data=D)
+  
+  screenreg(list(mod_soc_dist_asian_3,mod_soc_dist_black_3,mod_soc_dist_muslim_3,mod_soc_dist_white_3))
   
