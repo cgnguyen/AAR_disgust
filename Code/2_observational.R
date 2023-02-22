@@ -1,7 +1,8 @@
 #Setup----------------------------
   library(tidyverse)
   library(haven)
-  library(texreg)
+  
+  library(huxtable)
   
 
   D<-read_rds("./DATA/observational.rds")
@@ -74,10 +75,65 @@
     
   
   
-    screenreg(list(mod_soc_dist_asian_index,mod_soc_dist_black_index,mod_soc_dist_muslim_index,mod_soc_dist_white_index))
+    export_summs(mod_soc_dist_asian_index,mod_soc_dist_black_index,mod_soc_dist_muslim_index,mod_soc_dist_white_index,
+                 model.names = c("Asian","Black","MENA","White"),
+                 coefs = c("Disease Disgust"="disgust_disease",
+                          "Age"="age",
+                          "Female" = "gender_respweiblich",
+                          "Part-Time"="activity_simplePart_Time",
+                          "Retired" ="activity_simpleRetired",
+                          "Student"= "activity_simpleEducation",
+                          "Unemployed"= "activity_simpleUnemployed",
+                          "At-Home"= "activity_simpleAt_home",
+                          "Sick or Disabled"= "activity_simpleSick_or_disabled",
+                          "Other"="activity_simpleOther",
+                          "Educational Attainment-Middle"="edu_simplemittlere",
+                          "Educational Attainment-High"="edu_simplehohe",
+                          "Left-Right Self Placement"="lr",
+                          "Extroversion"="big_5_extro",
+                          "Agreeableness"="big_5_agree",
+                          "Conscienscitousness"="big_5_consc",
+                          "Neuroticism"="big_5_neuro",
+                          "Openeness"="big_5_open"))
+                 
+                          
+       
+                          
+                           mutate(big_5_extro = rowMeans(dplyr::select(.,big5_extro_1,big5_extro_2), na.rm=T),
+               big_5_agree= rowMeans(dplyr::select(.,big5_agree_1,big5_agree_2), na.rm=T),
+               big_5_consc= rowMeans(dplyr::select(.,big5_consc_1,big5_extro_2), na.rm=T),
+               big_5_neuro= rowMeans(dplyr::select(.,big5_neuro_1,big5_neuro_2), na.rm=T),
+               big_5_open= rowMeans(dplyr::select(.,big5_open_1,big5_open_2), na.rm=T))
+                          ""
+                 
+                 
 
   
   
+#Results for Paper --------------------------------------------------------------------------------
+    ##Visualizations ---------------------------------------------------------------
+    ###Modern Racism Measure---------------
+    
+    
+    
+    plot_summs(mod_mod_rac_index_1,mod_mod_rac_index_2,mod_mod_rac_index_3,
+               omit.coefs = "bundeslandBayern")
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    ###Social Distance Measures------------------------------------------------------
+    plot_summs(mod_soc_dist_asian_index, mod_soc_dist_black_index,mod_soc_dist_muslim_index,mod_soc_dist_white_index,
+               omit.coef="bundesland")
+
+    
+    
+    
   
 #Appendix -----------------
     ##Outgroup Evaluations--------------------
