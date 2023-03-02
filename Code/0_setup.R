@@ -84,7 +84,7 @@
    
     
     
-    
+    ##Modern Racism--------------------------
     #Note- last item reverse coded
     D_1<-
       D_1 %>% 
@@ -147,7 +147,270 @@
   
     
    write_rds(D_1, file="./DATA/observational.rds")
+   
+   
+#Clean Wave 3 ------------------------------------------
+     D_3<-read_sav("./Data/wave_3.sav")
+
+
+
+
+##Conditions --------------------------------------------------------------
+  D_3<-
+    D_3%>%
+    dplyr::mutate(condition=as.factor(c_0066),
+           anger = as.factor(case_when(condition == 1 ~ "Yes",
+                                       condition == 5 ~ "Yes", 
+                                       TRUE ~"No")),
+           anxiety = as.factor(case_when(condition == 2 ~ "Yes",
+                                       condition == 6 ~ "Yes", 
+                                       TRUE ~"No")),
+           disgust = as.factor(case_when(condition == 3 ~ "Yes",
+                                       condition == 7 ~ "Yes", 
+                                       TRUE ~"No")),
+           corona =as.factor(case_when(condition == 5 ~ "Yes",
+                                       condition == 6 ~"Yes",
+                                       condition == 7 ~ "Yes",
+                                       condition == 8 ~ "Yes",
+                                       TRUE ~"No")),
+           emotion= as.factor(case_when(anger == "Yes" ~ "Anger",
+                                        anxiety == "Yes" ~ "Anxiety",
+                                        disgust == "Yes" ~ "Disgust",
+                                         TRUE ~ "Control")))
+                                        
+  ## Recoding D_3$condition
+  D_3$condition <- fct_recode(D_3$condition,
+    "Anger-General" = "1",
+    "Anxiety-General" = "2",
+    "Disgust-General" = "3",
+    "Control" = "4",
+    "Anger-Corona" = "5",
+    "Anxiety-Corona" = "6",
+    "Disgust-Corona" = "7",
+    "Corona" = "8"
+  )
+  
+  D_3$condition<-relevel(D_3$condition, ref="Control")
+  
+
+## PTV AfD -----------------------------------------------------------------
+
+    D_3<-
+     D_3%>%
+     dplyr::mutate(ptv_afd_1=car::recode(v_123,"99=0"),
+            ptv_afd_2=car::recode(v_627,"99=0"),
+            ptv_afd = case_when(is.na(ptv_afd_1) ~ (ptv_afd_2),
+                                TRUE ~ ptv_afd_1))
+  
+     D_3<-
+      D_3%>%
+      dplyr::mutate(ptv_cdu_1=car::recode(v_113,"99=0"),
+            ptv_cdu_2=car::recode(v_617,"99=0"),
+            ptv_cdu = case_when(is.na(ptv_cdu_1) ~ (ptv_cdu_2),
+                                TRUE ~ ptv_cdu_1))
+  
+    
+
+## Party Affinity ----------------------------------------------------------
+  look_for(D_3, "F3_03")
+  
+  D_3$v_554
+  
+  D_3<-
+    D_3%>%
+      dplyr::mutate(aff_afd=car::recode(v_554,"99=NA; 98=NA"))%>%
+      dplyr::mutate(aff_afd=aff_afd-4)
+
+  
+## Manipulation Checks -------------------------------------------------------
+   D_3<-
+    D_3%>%
+      dplyr::mutate(emo_anger_1=car::recode(v_581,"98=NA;99=NA"),
+             emo_anger_2=car::recode(v_601,"98=NA;99=NA"),
+             emo_anger=case_when(is.na(emo_anger_1) ~ (emo_anger_2),
+                                TRUE ~ emo_anger_1))
+  
+  D_3<-
+    D_3%>%
+      dplyr::mutate(emo_anxiety_1=car::recode(v_582,"98=NA;99=NA"),
+             emo_anxiety_2=car::recode(v_602,"98=NA;99=NA"),
+             emo_anxiety=case_when(is.na(emo_anxiety_1) ~ (emo_anxiety_2),
+                                TRUE ~ emo_anxiety_1))
+  
+  D_3<-
+    D_3%>%
+      dplyr::mutate(emo_happy_1=car::recode(v_583,"98=NA;99=NA"),
+             emo_happy_2=car::recode(v_603,"98=NA;99=NA"),
+             emo_happy=case_when(is.na(emo_happy_1) ~ (emo_happy_2),
+                                TRUE ~ emo_happy_1))
+  
+    D_3<-
+    D_3%>%
+      dplyr::mutate(emo_sad_1=car::recode(v_584,"98=NA;99=NA"),
+             emo_sad_2=car::recode(v_604,"98=NA;99=NA"),
+             emo_sad=case_when(is.na(emo_sad_1) ~ (emo_sad_2),
+                                TRUE ~ emo_sad_1))
+  
+  D_3<-
+    D_3%>%
+      dplyr::mutate(emo_disgust_1=car::recode(v_585,"98=NA;99=NA"),
+             emo_disgust_2=car::recode(v_605,"98=NA;99=NA"),
+             emo_disgust=case_when(is.na(emo_disgust_1) ~ (emo_disgust_2),
+                                TRUE ~ emo_disgust_1))  
+    
+  D_3<-
+    D_3%>%
+      dplyr::mutate(emo_guilty_1=car::recode(v_586,"98=NA;99=NA"),
+             emo_guilty_2=car::recode(v_606,"98=NA;99=NA"),
+             emo_guilty=case_when(is.na(emo_guilty_1) ~ (emo_guilty_2),
+                                TRUE ~ emo_guilty_1))   
+  
+  D_3<-
+    D_3%>%
+      dplyr::mutate(emo_powerless_1=car::recode(v_587,"98=NA;99=NA"),
+             emo_powerless_2=car::recode(v_607,"98=NA;99=NA"),
+             emo_powerless=case_when(is.na(emo_powerless_1) ~ (emo_powerless_2),
+                                TRUE ~ emo_powerless_1))  
+
+
+
+# ## Feeling of Control ------------------------------------------------------
+#   look_for(D_3, "F15.1")
+#   
+# 
+# 
+#   
+#   D_3<-
+#     D_3%>%
+#       dplyr::mutate(feel_control_1_p=car::recode(v_501,"98=NA;99=NA")-1,
+#                     feel_control_2_p=(car::recode(v_502,"98=NA;99=NA")-5)*-1,
+#                     feel_control_3_p=car::recode(v_503,"98=NA;99=NA")-1,
+#                     feel_control_4_p=car::recode(v_504,"98=NA;99=NA")-1,
+#                     feel_control_5_p=(car::recode(v_505,"98=NA;99=NA")-5)*-1)%>%
+#          mutate(feel_control_p = rowMeans(dplyr::select(., starts_with("feel_control_")), na.rm = TRUE))
+#   
+#   
+#   D_3<-
+#     D_3%>%
+#       unite(feel_control, c("v_588","v_608"), na.rm=T)%>%
+#       mutate(feel_control=car::recode(v_501,"98=NA;99=NA")-1)
+#       
+# 
+
+##Modern Rac --------------------------------------------------------------
+    select_vec<-look_for(D_3, "F29")$variable
+
+
+      D_3<-
+        D_3%>%
+          unite(mod_rac_1, c("v_162","v_634"), na.rm=T)%>%
+          unite(mod_rac_2, c("v_163","v_635"), na.rm=T)%>%
+          unite(mod_rac_3, c("v_164","v_636"), na.rm=T)%>%
+          dplyr::mutate(across(starts_with("mod_rac"),
+                        ~as.numeric(.)))
+
+      D_3<-
+        D_3%>%
+          dplyr::mutate(mod_rac_1=car::recode(mod_rac_1,"6=NA;7=NA"),
+                 mod_rac_2=car::recode(mod_rac_2,"6=NA;7=NA"),
+                 mod_rac_3=car::recode(mod_rac_3,"6=NA;7=NA"))%>%
+          rowwise()%>%
+          dplyr::mutate(mod_rac = mean(c(mod_rac_1,mod_rac_2,mod_rac_3), na.rm=T))
+
+# 
+# ## Populism Scale 1 Pre-Treatment-----------------------------------------------
+# 
+#    D_3<-
+#         D_3%>%
+#           dplyr::rename(pop_p_1=v_537)%>%
+#           dplyr::rename(pop_p_2=v_538)%>%
+#           dplyr::rename(pop_p_3=v_539)%>%
+#           dplyr::rename(pop_p_4=v_540)%>%
+#           dplyr::rename(pop_p_5=v_541)%>%
+#           dplyr::rename(pop_p_6=v_542)%>%
+#           rowwise()%>%
+#           dplyr::mutate(pop_people_p = mean(c(pop_p_3,pop_p_4), na_rm=T),
+#                  pop_elite_p = mean(c(pop_p_1,pop_p_2), na_rm=T),
+#                  pop_will_p = mean(c(pop_p_5,pop_p_6), na_rm=T),
+#                  pop_p = mean(c(pop_p_1,pop_p_2,pop_p_3,pop_p_4,pop_p_5, pop_p_6),na.rm=T),
+#                  pop_p_min=min(c(pop_people_p,pop_elite_p,pop_will_p),na.rm=T),
+#                  pop_p_multip=pop_people_p*pop_elite_p*pop_will_p)
+#                  
+#                    
+#                    
+#                  
+#                  
+# 
+# ##Populism Scale 2 --------------------------------------------------------------
+#     select_vec<-look_for(D_3, "F99")$variable
+# 
+#         
+#       D_3<-
+#         D_3%>%
+#           dplyr::mutate(across(select_vec, ~na_if(.,99)))%>%
+#           dplyr::mutate(across(select_vec, ~na_if(.,98)))%>%
+#           
+#           unite(pop_1, c("v_595","v_628"), na.rm=T)%>%
+#           unite(pop_2, c("v_596","v_629"), na.rm=T)%>%
+#           unite(pop_3, c("v_597","v_630"), na.rm=T)%>%
+#           unite(pop_4, c("v_598","v_631"), na.rm=T)%>%
+#           unite(pop_5, c("v_599","v_632"), na.rm=T)%>%
+#           unite(pop_6, c("v_600","v_633"), na.rm=T)%>%
+#         
+#           dplyr::mutate(across(starts_with("pop_"),
+#                         ~as.numeric(.)))
+#       
+#      D_3<-
+#        D_3%>%
+#         mutate(pop_people = rowMeans(dplyr::select(.,pop_1,pop_2), na.rm = TRUE),
+#                pop_elite = rowMeans(dplyr::select(.,pop_3,pop_4), na.rm = TRUE),
+#                pop_will = rowMeans(dplyr::select(.,pop_5,pop_6), na.rm = TRUE),
+#                pop = rowMeans(dplyr::select(.,pop_1,pop_2,pop_3,pop_4,pop_5, pop_6),na.rm=T),
+#                pop_p_min=min(c(pop_people_p,pop_elite_p,pop_will_p),na.rm=T),
+#                pop_multi=pop_people*pop_elite*pop_will)
+#                
      
+
+               
+##Conspiracy Theories--------------------
+ # note reverse coding on item v_277/640
+  look_for(D_3, "F42")
+         select_vec<-look_for(D_3, "F42")$variable
+
+       D_3<-D_3%>%
+          dplyr::mutate(across(select_vec, ~na_if(.,99)))%>%
+          dplyr::mutate(across(select_vec, ~na_if(.,98)))%>%
+          dplyr::mutate(across(select_vec, ~na_if(.,9)))%>%
+          dplyr::mutate(across(select_vec, ~na_if(.,8)))%>%
+          unite(consp_1, c("v_275","v_638"), na.rm=T)%>%
+          unite(consp_2, c("v_276","v_639"), na.rm=T)%>%
+          unite(consp_3, c("v_277","v_640"), na.rm=T)%>%
+          unite(consp_4, c("v_278","v_641"), na.rm=T)%>%
+          unite(consp_5, c("v_279","v_642"), na.rm=T)%>%
+          unite(consp_6, c("v_280","v_643"), na.rm=T)%>%
+          unite(consp_7, c("v_281","v_644"), na.rm=T)%>%
+          dplyr::mutate(across(starts_with("consp_"),
+                        ~as.numeric(.)))
+         
+## Data Exclusion --------------------
+       
+         #Read in handcoded noncompliance data 
+  prime_code<-read_csv("./Data/prime_code.csv")
+
+
+  D_3<-
+    prime_code%>%
+    dplyr::select(-condition,-text_prime)%>%
+    right_join(D_3, by="lfdn")
+      
+ 
+
+  D_3<-
+    D_3%>%
+    dplyr::mutate(exclude=case_when(non_comp==1 ~ 1,
+                             no_experience==1 ~1, 
+                             TRUE ~ 0))
+
 #Conjoint Cleaning & Setup-----------------------------------
   ##dplyr::select conditions and pivot longer to have one row per trial
   #Choice conditions are listed in condition 31 to 40 - number represents to condition number

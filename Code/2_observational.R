@@ -1,8 +1,10 @@
 #Setup----------------------------
   library(tidyverse)
   library(haven)
-  
+  library(officer)
   library(huxtable)
+  library(jtools)
+  
   
 
   D<-read_rds("./DATA/observational.rds")
@@ -38,7 +40,7 @@
 
 
   
-  screenreg(list(mod_eval_asian,mod_eval_black,mod_eval_muslim,mod_eval_white))
+ 
   
   
   ##Social Distance Measures for outgroups-----------------------------------
@@ -98,15 +100,44 @@
                  
                           
        
-                          
-                           mutate(big_5_extro = rowMeans(dplyr::select(.,big5_extro_1,big5_extro_2), na.rm=T),
-               big_5_agree= rowMeans(dplyr::select(.,big5_agree_1,big5_agree_2), na.rm=T),
-               big_5_consc= rowMeans(dplyr::select(.,big5_consc_1,big5_extro_2), na.rm=T),
-               big_5_neuro= rowMeans(dplyr::select(.,big5_neuro_1,big5_neuro_2), na.rm=T),
-               big_5_open= rowMeans(dplyr::select(.,big5_open_1,big5_open_2), na.rm=T))
-                          ""
+           
+    table_social<-
+      export_summs(mod_soc_dist_asian_index,mod_soc_dist_black_index,mod_soc_dist_muslim_index,mod_soc_dist_white_index,
+                 model.names = c("Asian","Black","MENA","White"),
+                 coefs = c("Disease Disgust"="disgust_disease",
+                          "Age"="age",
+                          "Female" = "gender_respweiblich",
+                          "Part-Time"="activity_simplePart_Time",
+                          "Retired" ="activity_simpleRetired",
+                          "Student"= "activity_simpleEducation",
+                          "Unemployed"= "activity_simpleUnemployed",
+                          "At-Home"= "activity_simpleAt_home",
+                          "Sick or Disabled"= "activity_simpleSick_or_disabled",
+                          "Other"="activity_simpleOther",
+                          "Educational Attainment-Middle"="edu_simplemittlere",
+                          "Educational Attainment-High"="edu_simplehohe",
+                          "Left-Right Self Placement"="lr",
+                          "Extroversion"="big_5_extro",
+                          "Agreeableness"="big_5_agree",
+                          "Conscientiousness "="big_5_consc",
+                          "Neuroticism"="big_5_neuro",
+                          "Openeness"="big_5_open"))
+    
+    #Style Table
+    
+    table_social%>%
+          set_caption("Impact of Disease Disgust on social acceptance for different racial groups")%>%
+          set_font_size(12)%>%
+          quick_docx(file="./Tables/social_distance.docx")
+          
+    
+    
+    
+                 to.file = "docx",
+                 file.name="./Tables/social_distance.docx")%>%
+                 set_caption("Test")
                  
-                 
+                         
 
   
   
