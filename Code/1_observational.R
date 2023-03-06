@@ -73,89 +73,79 @@
     
     
   ###Results Figure---------------------------------------------
-    #Update to use dotwhisker-
-
-      
-      dwplot(list(mod_mod_rac_index_1,mod_mod_rac_index_2,mod_mod_rac_index_3))%>%
-        relabel_predictors( c("Disease Disgust"="disgust_disease",
-                          "Left-Right Self Placement"="lr",
-                          "Extroversion"="big_5_extro",
-                          "Agreeableness"="big_5_agree",
-                          "Conscientiousness"="big_5_consc",
-                          "Neuroticism"="big_5_neuro",
-                          "Openness"="big_5_open",
-                          "Age"="age",
-                          "Female" = "gender_respweiblich",
-                          "Part-Time Employment"="activity_simplePart_Time",
-                          "Retired" ="activity_simpleRetired",
-                          "Student"= "activity_simpleEducation",
-                          "Unemployed"= "activity_simpleUnemployed",
-                          "At-Home"= "activity_simpleAt_home",
-                          # "Sick or Disabled"= "activity_simpleSick_or_disabled",
-                          # "Other"="activity_simpleOther",
-                          "Middle"="edu_simplemittlere",
-                          "High"="edu_simplehohe"))
-
+    #Update to use dotwhisker / Handcoded result table figure
+    mod_1_temp<-
+      mod_mod_rac_index_1%>%
+      broom::tidy()%>%
+      mutate(model="Bivariate Model")
     
+    mod_2_temp<-
+      mod_mod_rac_index_2%>%
+      broom::tidy()%>%
+      mutate(model="Socio-Demographic Controls")
     
-    
-    
-    summs(mod_mod_rac_index_1)
-    
-    
-  make_tidies(mod_mod_rac_index_1)
-    
-    
-  tidy(mod_mod_rac_index_1,mod_mod_rac_index_2,mod_mod_rac_index_3)  
-    
-    
-  pane_list <-
-    list(
-      "1.Disease Disgust" = c("Disease Disgust"),
-      "2.Other Personality Traits" = c("Extroversion", "Agreeableness", "Neuroticism","Conscientiousness","Openness"),
-      "3.Socio-Demographic Controls" = c("Age","Female", "Left-Right Self Placement"),
-      "4.Education Attainment Ref: Low"= c("Middle","High"),
-      "5.Main Activity - Ref: Full Time Employed" =c("Part-Time Employment","Retired","Student","Unemployed","At-Home"))
-
-    
-    
+    mod_3_temp<-
+      mod_mod_rac_index_3%>%
+      broom::tidy()%>%
+      mutate(model="Full Model")
   
-  summs(mod_mod_rac_index_1,mod_mod_rac_index_2,mod_mod_rac_index_3)
+  temp_table<-rbind(mod_1_temp,mod_2_temp,mod_3_temp)
+   
   
   
-    
-   fig_1<-
-                  model.names = c("Bivariate Model","Socio-Demographic Controls","Full Model"),
-                  coefs = c("Disease Disgust"="disgust_disease",
-                          "Left-Right Self Placement"="lr",
-                          "Extroversion"="big_5_extro",
-                          "Agreeableness"="big_5_agree",
-                          "Conscientiousness"="big_5_consc",
-                          "Neuroticism"="big_5_neuro",
-                          "Openness"="big_5_open",
-                          "Age"="age",
-                          "Female" = "gender_respweiblich",
-                          "Part-Time Employment"="activity_simplePart_Time",
-                          "Retired" ="activity_simpleRetired",
-                          "Student"= "activity_simpleEducation",
-                          "Unemployed"= "activity_simpleUnemployed",
-                          "At-Home"= "activity_simpleAt_home",
-                          # "Sick or Disabled"= "activity_simpleSick_or_disabled",
-                          # "Other"="activity_simpleOther",
-                          "Middle"="edu_simplemittlere",
-                          "High"="edu_simplehohe"),
-               scale=T,
-               groups=pane_list)+
-     theme(legend.position="bottom")
-               
-    
-    
-    fig_1
-    
-    #Export  Figure for powerpoint  
-    ggsave(plot=fig_1,filename="./Figures/obs_mod_rac.png", width = 12, height=5.5, unit="in")
-    
+  #Define Brackets-------
+  variable_brackets <- list(
+    c("Socio-Economic Controls", "Age", "Left-Right Self Placement"),
+    c("Education", "Middle", "High"),
+    c("Main Activity", "Part-Time Employment", "Stay-At Home"),
+    c("Big-5 Personality Traits","Extroversion","Openness")
+)
 
+  fig_1_full<-
+    {temp_table%>%
+      #Clean high variance variables with few observations/ Intercepts
+      filter(!grepl('bundesland*', term))%>%
+      filter(term != "gender_respdivers")%>%
+      filter(term!= "activity_simpleOther")%>%
+      filter(term!= "activity_simpleSick_or_disabled")%>%
+      #Generate plot and define basic terms
+      dwplot(
+        by_2sd = T,
+        dot_args = list(aes(shape=model,colour=model),size=4), 
+        whisker_args = list(size=2),
+        model_order = c("Bivariate Model","Socio-Demographic Controls","Full Model"))%>%
+          relabel_predictors( c("disgust_disease"="Disease Disgust Sensitivity",
+                              "age"="Age",
+                              "gender_respweiblich"= "Female",
+                               "lr"="Left-Right Self Placement",
+                               "edu_simplemittlere"="Middle",
+                              "edu_simplehohe"="High",
+                              "activity_simplePart_Time"=  "Part-Time Employment",
+                              "activity_simpleRetired"  = "Retired",
+                              "activity_simpleEducation" = "Education",
+                              "activity_simpleUnemployed"="Unemployed",
+                              "activity_simpleAt_home"="Stay-At Home",
+                              "activity_simpleSick_or_disabled"="Sick or Disabled",
+                              "big_5_extro"="Extroversion",
+                              "big_5_consc"="Conscientiousness",
+                              "big_5_agree"="Agreeableness",
+                              "big_5_neuro"= "Neuroticism",
+                              "big_5_open" ="Openness"
+                             ))+
+    #
+    #Define Figure to make it more readable
+      theme_minimal(base_size = 18)+
+      geom_vline(xintercept=0, linetype="dashed")+
+      theme(legend.position = "bottom", legend.title = element_blank())+
+    #Combine Guides
+      guides(
+        shape = guide_legend("Model"), 
+        colour = guide_legend("Model"))
+      }%>%
+    #Add Brackets (must be at end + outside bracket)
+      add_brackets(variable_brackets, fontSize=1)
+   
+  fig_1_full     
 
   
   ##Social Distance Measures for outgroups-----------------------------------
