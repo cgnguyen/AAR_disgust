@@ -5,9 +5,9 @@
   library(huxtable)
   library(psych)
   library(jtools)
-  library(rvg)
   library(broom)
   library(dotwhisker)
+  library(viridis)
 
   D<-read_rds("./DATA/observational.rds")
   
@@ -72,7 +72,7 @@
         quick_docx(file="./Tables/table_modern_rac.docx")
     
     
-  ###Results Figure---------------------------------------------
+  ###Full(ish) Figure for Results----------------------------
     #Update to use dotwhisker / Handcoded result table figure
     mod_1_temp<-
       mod_mod_rac_index_1%>%
@@ -91,18 +91,18 @@
   
   temp_table<-rbind(mod_1_temp,mod_2_temp,mod_3_temp)
    
+  #Define Color Scheme
+  color_vec<-viridis(3)
   
-  
-  #Define Brackets-------
+  ###Define Brackets#
   variable_brackets <- list(
-    c("Socio-Economic Controls", "Age", "Left-Right Self Placement"),
-    c("Education", "Middle", "High"),
+    c("Soc-Econ", "Age", "Left-Right Self Placement"),
+    c("Edu.", "Middle", "High"),
     c("Main Activity", "Part-Time Employment", "Stay-At Home"),
-    c("Big-5 Personality Traits","Extroversion","Openness")
-)
+    c("Big-5 Personality Traits","Extroversion","Openness"))
 
   fig_1_full<-
-    {temp_table%>%
+    temp_table%>%
       #Clean high variance variables with few observations/ Intercepts
       filter(!grepl('bundesland*', term))%>%
       filter(term != "gender_respdivers")%>%
@@ -111,8 +111,8 @@
       #Generate plot and define basic terms
       dwplot(
         by_2sd = T,
-        dot_args = list(aes(shape=model,colour=model),size=4), 
-        whisker_args = list(size=2),
+        dot_args = list(aes(shape=model,colour=model),size=2), 
+        whisker_args = list(size=1),
         model_order = c("Bivariate Model","Socio-Demographic Controls","Full Model"))%>%
           relabel_predictors( c("disgust_disease"="Disease Disgust Sensitivity",
                               "age"="Age",
@@ -140,13 +140,61 @@
     #Combine Guides
       guides(
         shape = guide_legend("Model"), 
-        colour = guide_legend("Model"))
-      }%>%
+        colour = guide_legend("Model"))+
+        scale_colour_manual(values=color_vec)
+      
+      
+  
+  #Add Brackets
+  fig_1_export<-
+    fig_1_full%>%
     #Add Brackets (must be at end + outside bracket)
-      add_brackets(variable_brackets, fontSize=1)
+      add_brackets(variable_brackets, fontSize=0.75)
    
-  fig_1_full     
-
+  #Export to Picture
+  ggsave(plot=fig_1_export,
+         filename="./Figures/mod_rac.jpg",
+         width= 16,
+         height= 8,
+         units="in")
+  
+  
+  ###Create Subset Figures for Presentation-------------------------
+  fig_1_simple<-
+    fig_1_full+
+    scale_colour_manual(values=c("NA","NA",color_vec[3]))
+  
+   fig_2_soc<-
+    fig_1_full+
+    scale_colour_manual(values=c("NA",color_vec[2],color_vec[3]))
+  
+  
+  fig_1_simple<-
+    fig_1_simple%>%
+    #Add Brackets (must be at end + outside bracket)
+      add_brackets(variable_brackets, fontSize=0.75)
+   
+  #Export to Picture
+  ggsave(plot=fig_1_simple,
+         filename="./Figures/mod_rac_simple.jpg",
+         width= 16,
+         height= 8,
+         units="in")
+  
+  fig_2_soc<-
+    fig_2_soc%>%
+    #Add Brackets (must be at end + outside bracket)
+      add_brackets(variable_brackets, fontSize=0.75)
+   
+  #Export to Picture
+  ggsave(plot=fig_2_soc,
+         filename="./Figures/mod_rac_soc.jpg",
+         width= 16,
+         height= 8,
+         units="in")
+  
+   
+   
   
   ##Social Distance Measures for outgroups-----------------------------------
   mod_soc_dist_asian_index<-lm(soc_dist_asian_index~disgust_disease+ 
@@ -180,6 +228,106 @@
                                big_5_extro+big_5_agree+big_5_consc+big_5_neuro+big_5_open, 
                       data=D)
     
+  
+  
+  #Results Figure 
+    ###Full(ish) Figure for Results----------------------------
+    #Update to use dotwhisker / Handcoded result table figure
+    mod_1_temp<-
+      mod_soc_dist_asian_index%>%
+      broom::tidy()%>%
+      mutate(model="Asian")
+    
+    mod_2_temp<-
+      mod_soc_dist_black_index%>%
+      broom::tidy()%>%
+      mutate(model="Black")
+    
+    mod_3_temp<-
+      mod_soc_dist_muslim_index%>%
+      broom::tidy()%>%
+      mutate(model="Muslim")
+    
+    mod_4_temp<-
+      mod_soc_dist_white_index%>%
+      broom::tidy()%>%
+      mutate(model="White")
+  
+  temp_table<-rbind(mod_1_temp,mod_2_temp,mod_3_temp,mod_4_temp)
+   
+  #Define Color Scheme
+  color_vec<-viridis(4)
+  
+  ###Define Brackets#
+  variable_brackets <- list(
+    c("Soc-Econ", "Age", "Left-Right Self Placement"),
+    c("Edu.", "Middle", "High"),
+    c("Main Activity", "Part-Time Employment", "Stay-At Home"),
+    c("Big-5 Personality Traits","Extroversion","Openness"))
+
+  fig_2_full<-
+    temp_table%>%
+      #Clean high variance variables with few observations/ Intercepts
+      filter(!grepl('bundesland*', term))%>%
+      filter(term != "gender_respdivers")%>%
+      filter(term!= "activity_simpleOther")%>%
+      filter(term!= "activity_simpleSick_or_disabled")%>%
+      #Generate plot and define basic terms
+      dwplot(
+        by_2sd = T,
+        dot_args = list(aes(shape=model,colour=model),size=2), 
+        whisker_args = list(size=1),
+        model_order = c("White","Asian","Black","Muslim"))%>%
+          relabel_predictors( c("disgust_disease"="Disease Disgust Sensitivity",
+                              "age"="Age",
+                              "gender_respweiblich"= "Female",
+                               "lr"="Left-Right Self Placement",
+                               "edu_simplemittlere"="Middle",
+                              "edu_simplehohe"="High",
+                              "activity_simplePart_Time"=  "Part-Time Employment",
+                              "activity_simpleRetired"  = "Retired",
+                              "activity_simpleEducation" = "Education",
+                              "activity_simpleUnemployed"="Unemployed",
+                              "activity_simpleAt_home"="Stay-At Home",
+                              "activity_simpleSick_or_disabled"="Sick or Disabled",
+                              "big_5_extro"="Extroversion",
+                              "big_5_consc"="Conscientiousness",
+                              "big_5_agree"="Agreeableness",
+                              "big_5_neuro"= "Neuroticism",
+                              "big_5_open" ="Openness"
+                             ))+
+    #
+    #Define Figure to make it more readable
+      theme_minimal(base_size = 18)+
+      geom_vline(xintercept=0, linetype="dashed")+
+      theme(legend.position = "bottom", legend.title = element_blank())+
+    #Combine Guides
+      guides(
+        shape = guide_legend("Model"), 
+        colour = guide_legend("Model"))+
+        scale_colour_manual(values=color_vec)
+      
+      
+  
+  #Add Brackets
+  fig_2_export<-
+    fig_2_full%>%
+    #Add Brackets (must be at end + outside bracket)
+      add_brackets(variable_brackets, fontSize=0.75)
+   
+  #Export to Picture
+  ggsave(plot=fig_2_export,
+         filename="./Figures/mod_distance.jpg",
+         width= 16,
+         height= 8,
+         units="in")
+  
+  
+  
+  
+  
+  
+  
   
   
     export_summs(mod_soc_dist_asian_index,mod_soc_dist_black_index,mod_soc_dist_muslim_index,mod_soc_dist_white_index,
